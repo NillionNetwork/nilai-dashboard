@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Sidebar from '@/components/Sidebar'
 import Header from '@/components/Header'
 import { usePrivy } from '@privy-io/react-auth'
@@ -11,11 +12,44 @@ const TOPUP_AMOUNTS = [10, 25, 50, 100, 250, 500]
 export default function CreditsPage() {
   const { authenticated, user } = usePrivy()
   const { balance, loading } = useUserCredits()
+  const searchParams = useSearchParams()
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null)
   const [customAmount, setCustomAmount] = useState<string>('')
   const [isToppingUp, setIsToppingUp] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+
+  // Handle Stripe redirects
+  useEffect(() => {
+    const successParam = searchParams.get('success')
+    const canceledParam = searchParams.get('canceled')
+    const sessionId = searchParams.get('session_id')
+
+    if (successParam === 'true' && sessionId) {
+      setSuccess(true)
+      setError(null)
+      setSelectedAmount(null)
+      setCustomAmount('')
+      
+      // Refresh credits after a short delay
+      setTimeout(() => {
+        window.location.reload()
+      }, 2000)
+
+      // Clean up URL parameters
+      const url = new URL(window.location.href)
+      url.searchParams.delete('success')
+      url.searchParams.delete('session_id')
+      window.history.replaceState({}, '', url.toString())
+    } else if (canceledParam === 'true') {
+      setError('Payment was canceled. Please try again if you want to add credits.')
+      
+      // Clean up URL parameters
+      const url = new URL(window.location.href)
+      url.searchParams.delete('canceled')
+      window.history.replaceState({}, '', url.toString())
+    }
+  }, [searchParams])
 
   const handleTopup = async () => {
     if (!authenticated || !user) {
@@ -34,7 +68,8 @@ export default function CreditsPage() {
     setSuccess(false)
 
     try {
-      const response = await fetch('/api/users/topup', {
+      // Create Stripe Checkout session
+      const response = await fetch('/api/stripe/create-checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,20 +82,19 @@ export default function CreditsPage() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to top up credits')
+        throw new Error(errorData.error || 'Failed to create checkout session')
       }
 
-      setSuccess(true)
-      setSelectedAmount(null)
-      setCustomAmount('')
+      const { url } = await response.json()
       
-      // Refresh credits after a short delay
-      setTimeout(() => {
-        window.location.reload()
-      }, 1000)
+      if (url) {
+        // Redirect to Stripe Checkout
+        window.location.href = url
+      } else {
+        throw new Error('No checkout URL received')
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
-    } finally {
       setIsToppingUp(false)
     }
   }
@@ -181,7 +215,7 @@ export default function CreditsPage() {
                   border: 'none',
                 }}
               >
-                {isToppingUp ? 'Processing...' : 'Top up credits'}
+                {isToppingUp ? 'Redirecting to payment...' : 'Proceed to payment'}
               </button>
             </div>
           </div>
