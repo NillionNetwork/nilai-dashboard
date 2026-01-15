@@ -17,7 +17,7 @@ interface Credential {
 }
 
 export default function ApiKeysPage() {
-  const { authenticated, user, ready } = usePrivy()
+  const { authenticated, user, ready, login } = usePrivy()
   const [credentials, setCredentials] = useState<Credential[]>([])
   const [loading, setLoading] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
@@ -272,7 +272,20 @@ export default function ApiKeysPage() {
           <main className="p-8">
             <div className="max-w-6xl">
               <h1 className="mb-2 text-white">API keys</h1>
-              <p className="text-white opacity-80">Please log in to view your API keys.</p>
+              <p className="text-white opacity-80 mb-6">Please log in to manage your API keys.</p>
+              <button
+                type="button"
+                onClick={() => login()}
+                disabled={!ready}
+                className="px-6 py-3 rounded-md text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: 'var(--nillion-primary)',
+                  color: '#ffffff',
+                  border: 'none',
+                }}
+              >
+                {!ready ? 'Loading...' : 'Login with Privy'}
+              </button>
             </div>
           </main>
         </div>
