@@ -13,21 +13,21 @@ interface UsageData {
 }
 
 export default function UsagePage() {
-  const { authenticated, ready } = usePrivy()
+  const { authenticated, ready, user } = usePrivy()
   const [usageData, setUsageData] = useState<UsageData | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchUsage = async () => {
-      if (!ready || !authenticated) {
+      if (!ready || !authenticated || !user) {
         return
       }
 
       setLoading(true)
       setError(null)
       try {
-        const response = await fetch('/api/usage')
+        const response = await fetch(`/api/usage?user_id=${user.id}`)
         if (response.ok) {
           const data = await response.json()
           setUsageData({
@@ -49,7 +49,7 @@ export default function UsagePage() {
     }
 
     fetchUsage()
-  }, [ready, authenticated])
+  }, [ready, authenticated, user])
 
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat('en-US').format(num)
@@ -88,7 +88,16 @@ export default function UsagePage() {
               <div className="text-white opacity-80">Loading usage data...</div>
             ) : error ? (
               <div className="p-4 rounded-md" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>
-                {error}
+                <p className="mb-2">{error}</p>
+                {error.includes('No API keys found') && (
+                  <a 
+                    href="/api-keys" 
+                    className="text-sm underline hover:opacity-80"
+                    style={{ color: '#ef4444' }}
+                  >
+                    Go to API keys page to create one
+                  </a>
+                )}
               </div>
             ) : usageData ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
