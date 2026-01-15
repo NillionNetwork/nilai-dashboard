@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Sidebar from '@/components/Sidebar'
 import Header from '@/components/Header'
@@ -9,7 +9,7 @@ import { useUserCredits } from '@/hooks/useUserCredits'
 
 const TOPUP_AMOUNTS = [10, 25, 50, 100, 250, 500]
 
-export default function CreditsPage() {
+function CreditsContent() {
   const { authenticated, user } = usePrivy()
   const { balance, loading } = useUserCredits()
   const searchParams = useSearchParams()
@@ -225,3 +225,23 @@ export default function CreditsPage() {
   )
 }
 
+export default function CreditsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--nillion-bg)' }}>
+        <Sidebar />
+        <div className="ml-64">
+          <Header />
+          <main className="p-8">
+            <div className="max-w-4xl">
+              <h1 className="mb-2 text-white">Get Credits</h1>
+              <p className="text-white opacity-80">Loading...</p>
+            </div>
+          </main>
+        </div>
+      </div>
+    }>
+      <CreditsContent />
+    </Suspense>
+  )
+}
