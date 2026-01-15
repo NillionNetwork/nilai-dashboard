@@ -7,7 +7,7 @@ export default function PrivyProvider({ children }: { children: React.ReactNode 
 
   // If no App ID is configured, render children without Privy
   if (!appId || appId === 'your_privy_app_id_here') {
-    console.warn('Privy App ID not configured. Please add NEXT_PUBLIC_PRIVY_APP_ID to your .env.local file')
+    console.warn('Privy App ID not configured. Please add NEXT_PUBLIC_PRIVY_APP_ID to your .env file')
     return <>{children}</>
   }
 

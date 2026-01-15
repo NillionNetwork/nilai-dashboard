@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { CREDIT_SERVICE_URL, CREDIT_SERVICE_TOKEN } from '@/lib/credit-service'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2025-10-29.clover',
@@ -52,21 +53,12 @@ export async function POST(request: NextRequest) {
 
       // Only process if payment was successful
       if (session.payment_status === 'paid') {
-        const creditToken = process.env.NILAUTH_CREDIT_TOKEN
-        if (!creditToken) {
-          console.error('NILAUTH_CREDIT_TOKEN is not configured')
-          return NextResponse.json(
-            { error: 'Server configuration error' },
-            { status: 500 }
-          )
-        }
-
         // Make request to the credit service to add credits
-        const response = await fetch('http://localhost:3030/v1/users/topup', {
+        const response = await fetch(`${CREDIT_SERVICE_URL}users/topup`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${creditToken}`,
+            'Authorization': `Bearer ${CREDIT_SERVICE_TOKEN}`,
           },
           body: JSON.stringify({
             user_id,

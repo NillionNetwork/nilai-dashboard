@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { CREDIT_SERVICE_URL, CREDIT_SERVICE_TOKEN } from '@/lib/credit-service'
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,21 +20,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const creditToken = process.env.NILAUTH_CREDIT_TOKEN
-    if (!creditToken) {
-      console.error('NILAUTH_CREDIT_TOKEN is not configured')
-      return NextResponse.json(
-        { error: 'Server configuration error' },
-        { status: 500 }
-      )
-    }
-
     // Make request to the credential service
-    const response = await fetch('http://localhost:3030/v1/credential', {
+    const response = await fetch(`${CREDIT_SERVICE_URL}credential`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${creditToken}`,
+        'Authorization': `Bearer ${CREDIT_SERVICE_TOKEN}`,
       },
       body: JSON.stringify({
         user_id,
