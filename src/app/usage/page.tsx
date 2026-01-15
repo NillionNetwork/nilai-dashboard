@@ -13,7 +13,7 @@ interface UsageData {
 }
 
 export default function UsagePage() {
-  const { authenticated, ready, user } = usePrivy()
+  const { authenticated, ready, user, login } = usePrivy()
   const [usageData, setUsageData] = useState<UsageData | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -64,7 +64,20 @@ export default function UsagePage() {
           <main className="p-8">
             <div className="max-w-6xl">
               <h1 className="mb-2 text-white">Usage</h1>
-              <p className="text-white opacity-80">Please log in to view your usage statistics.</p>
+              <p className="text-white opacity-80 mb-6">Please log in to view usage statistics.</p>
+              <button
+                type="button"
+                onClick={() => login()}
+                disabled={!ready}
+                className="px-6 py-3 rounded-md text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: 'var(--nillion-primary)',
+                  color: '#ffffff',
+                  border: 'none',
+                }}
+              >
+                {!ready ? 'Loading...' : 'Login with Privy'}
+              </button>
             </div>
           </main>
         </div>

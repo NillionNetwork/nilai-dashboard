@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import Sidebar from '@/components/Sidebar'
 import Header from '@/components/Header'
 import CodeBlock from '@/components/CodeBlock'
@@ -29,6 +30,35 @@ export default function Home() {
                   1. Create and export an API key
                 </h2>
                 <CodeBlock code='export NILLION_API_KEY="your_api_key_here"' />
+                <div className="mt-4">
+                  <Link
+                    href="/api-keys"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-medium transition-opacity hover:opacity-90"
+                    style={{
+                      backgroundColor: 'var(--nillion-primary)',
+                      color: '#ffffff',
+                      border: 'none',
+                    }}
+                  >
+                    <span>Get an API key (login required)</span>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="inline-block"
+                    >
+                      <path
+                        d="M6 12L10 8L6 4"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </Link>
+                </div>
               </div>
 
               {/* Step 2 */}
