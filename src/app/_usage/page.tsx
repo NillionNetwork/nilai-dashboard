@@ -1,3 +1,11 @@
+/**
+ * Usage Page - DISABLED
+ * 
+ * This page has been disabled but kept for future reference.
+ * The route is disabled by renaming the folder to _usage (Next.js ignores folders starting with underscore).
+ * To re-enable: rename _usage back to usage and add it back to the sidebar navigation.
+ */
+
 'use client'
 
 import { useState, useEffect } from 'react'

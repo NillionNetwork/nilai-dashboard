@@ -195,23 +195,21 @@ export default function ApiKeysPage() {
     >
       <table className="w-full table-fixed">
         <colgroup>
-          <col style={{ width: '50%' }} />
-          <col style={{ width: '15%' }} />
-          <col style={{ width: '15%' }} />
+          <col style={{ width: '60%' }} />
+          <col style={{ width: '20%' }} />
           <col style={{ width: '20%' }} />
         </colgroup>
         <thead>
           <tr style={{ borderBottom: '1px solid var(--nillion-border)' }}>
             <th className="text-left px-6 py-3 text-sm font-semibold text-white">{firstColumnHeader}</th>
             <th className="text-left px-6 py-3 text-sm font-semibold text-white">Created</th>
-            <th className="text-left px-6 py-3 text-sm font-semibold text-white">Last used</th>
             <th className="text-left px-6 py-3 text-sm font-semibold text-white"></th>
           </tr>
         </thead>
         <tbody>
           {items.length === 0 ? (
             <tr>
-              <td colSpan={4} className="px-6 py-8 text-center text-white opacity-80">
+              <td colSpan={3} className="px-6 py-8 text-center text-white opacity-80">
                 {emptyMessage}
               </td>
             </tr>
@@ -240,7 +238,6 @@ export default function ApiKeysPage() {
                   </div>
                 </td>
                 <td className="px-6 py-4 text-white opacity-80 whitespace-nowrap">{formatDate(credential.created_at)}</td>
-                <td className="px-6 py-4 text-white opacity-80 whitespace-nowrap">{formatDate(credential.updated_at)}</td>
                 <td className="px-6 py-4">
                   <button
                     type="button"
