@@ -1,3 +1,11 @@
+/**
+ * Usage API Route - DISABLED
+ * 
+ * This API route has been disabled but kept for future reference.
+ * The route is disabled by renaming the folder to _usage (Next.js ignores folders starting with underscore).
+ * To re-enable: rename _usage back to usage.
+ */
+
 import { NextRequest, NextResponse } from 'next/server'
 import { CREDIT_SERVICE_URL, CREDIT_SERVICE_TOKEN } from '@/lib/credit-service'
 

@@ -36,9 +36,6 @@ NILAUTH_CREDIT_TOKEN=your_token_here
 STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 
-# Usage Statistics
-NILAI_INSTANCE_FOR_USAGE_STATS=https://credit.nilai.sandbox.nilogy.xyz/
-
 # Privy (authentication)
 NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id
 
@@ -52,7 +49,6 @@ NEXT_PUBLIC_BASE_URL=http://localhost:3000
 - **Privy** - Authentication
 - **Stripe** - Payment processing for credit top-ups
 - **nilAuth Credit Service** - Credit and credential management
-- **nilAI** - Usage statistics
 
 ## Features
 
@@ -61,4 +57,3 @@ NEXT_PUBLIC_BASE_URL=http://localhost:3000
 - DID management for NUCs and delegation flow
 - Credit balance management
 - Stripe payment integration for adding credits
-- Usage statistics tracking

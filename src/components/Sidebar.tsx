@@ -15,7 +15,6 @@ const navigation = [
   {
     section: 'MANAGE',
     items: [
-      { name: 'Usage', href: '/usage' },
       { name: 'API keys', href: '/api-keys' },
       { name: 'Get credits', href: '/credits' },
     ],
@@ -52,7 +51,7 @@ export default function Sidebar() {
               <path d="M2 12l10 5 10-5" />
             </svg>
           </div>
-          <span className="text-lg font-semibold text-white">BeBold AI</span>
+          <span className="text-lg font-semibold text-white">nilAI Dashboard</span>
         </div>
 
         <nav className="space-y-6">
