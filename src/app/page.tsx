@@ -20,7 +20,7 @@ export default function Home() {
               Developer quickstart
             </h1>
             <p className="mb-8 text-white opacity-80">
-              Follow these steps to get started with BeBold AI.
+              Follow these steps to get started with nilAI.
             </p>
 
             <div className="space-y-8">
@@ -29,7 +29,7 @@ export default function Home() {
                 <h2 className="mb-4 text-white">
                   1. Create and export an API key
                 </h2>
-                <CodeBlock code='export NILLION_API_KEY="your_api_key_here"' />
+                <CodeBlock enhanced={true} code='export NILLION_API_KEY="your_api_key_here"' />
                 <div className="mt-4">
                   <Link
                     href="/api-keys"
@@ -76,6 +76,7 @@ export default function Home() {
                 >
                   {(activeTab) => (
                     <CodeBlock 
+                      enhanced={true}
                       code={activeTab === 'ts' 
                         ? 'pnpm install @nillion/nilai-ts' 
                         : 'pip install nilai-py'} 
@@ -90,6 +91,8 @@ export default function Home() {
                   3. Make a completion
                 </h2>
                 <CodeBlock 
+                  enhanced={true}
+                  language={selectedLanguage}
                   code={selectedLanguage === 'ts' 
                     ? `import "dotenv/config";
 
@@ -106,7 +109,7 @@ async function main() {
   // Initialize the client in API key mode
   // For sandbox, use the following:
   const client = new NilaiOpenAIClient({
-    baseURL: "https://nilai-a779.nillion.network/v1/",
+    baseURL: "https://api.nilai.nillion.network//v1/",
     apiKey: API_KEY,
     nilauthInstance: NilAuthInstance.SANDBOX,
     // For production, use the following:

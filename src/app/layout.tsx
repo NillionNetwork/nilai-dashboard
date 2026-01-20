@@ -3,7 +3,7 @@ import './globals.css'
 import PrivyProvider from '@/components/PrivyProvider'
 
 export const metadata: Metadata = {
-  title: 'BeBold AI',
+  title: 'nilAI Dashboard',
   description: 'Developer Dashboard',
 }
 

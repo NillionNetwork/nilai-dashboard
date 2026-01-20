@@ -23,9 +23,8 @@ export default function Header() {
       <div className="px-8 py-4 flex items-center justify-end">
         <div className="flex items-center gap-6">
           <nav className="flex items-center gap-6">
-            <a href="#" className="text-sm text-white hover:opacity-80 transition-opacity">Dashboard</a>
             <a href="https://docs.nillion.com/build/private-llms/quickstart" target="_blank" rel="noopener noreferrer" className="text-sm text-white hover:opacity-80 transition-opacity">Docs</a>
-            <a href="https://nilai-a779.nillion.network/docs" target="_blank" rel="noopener noreferrer" className="text-sm text-white hover:opacity-80 transition-opacity">API reference</a>
+            <a href="https://api.nilai.nillion.network/docs" target="_blank" rel="noopener noreferrer" className="text-sm text-white hover:opacity-80 transition-opacity">API reference</a>
           </nav>
           
           <div className="flex items-center gap-4">
