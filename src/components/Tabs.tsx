@@ -42,8 +42,8 @@ export default function Tabs({ tabs, children, defaultTab, activeTab: controlled
                 ? 'var(--nillion-primary-lightest)' 
                 : 'transparent',
               color: activeTab === tab.id 
-                ? 'var(--nillion-primary)' 
-                : '#ffffff',
+                ? '#1e3a8a' 
+                : 'var(--nillion-primary)',
               border: activeTab === tab.id
                 ? '1px solid var(--nillion-primary-lighter)'
                 : '1px solid var(--nillion-border)',
