@@ -38,6 +38,7 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 
 # Privy (authentication)
 NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id
+PRIVY_APP_SECRET=your_privy_app_secret
 ```
 
 ## Tech Stack
