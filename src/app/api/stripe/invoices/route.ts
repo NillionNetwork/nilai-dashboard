@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-10-29.clover',
-})
+import { stripe } from '@/lib/stripe'
 
 export async function GET(request: NextRequest) {
   try {
@@ -60,13 +57,6 @@ export async function GET(request: NextRequest) {
       customer: customer.id,
       limit: 100,
     })
-
-    // Get checkout session IDs that have invoices (to avoid duplicates)
-    const checkoutSessionsWithInvoices = new Set(
-      checkoutSessions.data
-        .filter((session) => session.invoice)
-        .map((session) => session.invoice as string)
-    )
 
     // Format invoices (prioritize these since they have invoice PDFs/URLs)
     const formattedInvoices = invoices.data
