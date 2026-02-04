@@ -53,20 +53,6 @@ export async function POST(request: NextRequest) {
 
       // Only process if payment was successful
       if (session.payment_status === 'paid') {
-        // Update customer with user_id metadata if customer exists
-        if (session.customer) {
-          try {
-            await stripe.customers.update(session.customer as string, {
-              metadata: {
-                user_id: user_id,
-              },
-            })
-          } catch (updateError) {
-            console.warn('Failed to update customer metadata:', updateError)
-            // Continue anyway - credits will still be added
-          }
-        }
-
         // Make request to the credit service to add credits
         const response = await fetch(`${CREDIT_SERVICE_URL}users/topup`, {
           method: 'POST',
