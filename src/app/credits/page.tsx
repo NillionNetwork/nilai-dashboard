@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Sidebar from '@/components/Sidebar'
 import Header from '@/components/Header'
@@ -16,8 +16,42 @@ function CreditsContent() {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null)
   const [customAmount, setCustomAmount] = useState<string>('')
   const [isToppingUp, setIsToppingUp] = useState(false)
+  const [isOpeningPortal, setIsOpeningPortal] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [transactions, setTransactions] = useState<any[]>([])
+  const [loadingTransactions, setLoadingTransactions] = useState(false)
+
+  // Get user email from linked accounts
+  const emailAccount = user?.linkedAccounts?.find(
+    (account: any) => account.type === 'email'
+  ) as { type: 'email'; address: string } | undefined
+  const userEmail = emailAccount?.address
+
+  // Fetch transaction history
+  const fetchTransactions = useCallback(async () => {
+    if (!authenticated || !user) {
+      setTransactions([])
+      return
+    }
+
+    setLoadingTransactions(true)
+    try {
+      const response = await fetch(`/api/stripe/invoices?user_id=${user.id}`)
+      if (response.ok) {
+        const data = await response.json()
+        setTransactions(data.transactions || [])
+      }
+    } catch (error) {
+      console.error('Error fetching transactions:', error)
+    } finally {
+      setLoadingTransactions(false)
+    }
+  }, [authenticated, user])
+
+  useEffect(() => {
+    fetchTransactions()
+  }, [fetchTransactions])
 
   // Handle Stripe redirects
   useEffect(() => {
@@ -31,8 +65,9 @@ function CreditsContent() {
       setSelectedAmount(null)
       setCustomAmount('')
       
-      // Refresh credits after a short delay
+      // Refresh credits and transactions after a short delay
       setTimeout(() => {
+        fetchTransactions()
         window.location.reload()
       }, 2000)
 
@@ -77,6 +112,7 @@ function CreditsContent() {
         body: JSON.stringify({
           user_id: user.id,
           amount: amount,
+          customer_email: userEmail,
         }),
       })
 
@@ -96,6 +132,56 @@ function CreditsContent() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
       setIsToppingUp(false)
+    }
+  }
+
+  const formatDate = (timestamp: number) => {
+    return new Date(timestamp * 1000).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }
+
+  const handleViewPortal = async () => {
+    if (!authenticated || !user) {
+      setError('You must be logged in to view the customer portal')
+      return
+    }
+
+    setIsOpeningPortal(true)
+    setError(null)
+
+    try {
+      const response = await fetch('/api/stripe/create-portal-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: user.id,
+          customer_email: userEmail,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to create portal session')
+      }
+
+      const { url } = await response.json()
+      
+      if (url) {
+        // Redirect to Stripe Customer Portal
+        window.location.href = url
+      } else {
+        throw new Error('No portal URL received')
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+      setIsOpeningPortal(false)
     }
   }
 
@@ -230,6 +316,143 @@ function CreditsContent() {
               >
                 {isToppingUp ? 'Redirecting to payment...' : 'Proceed to payment'}
               </button>
+            </div>
+
+            {/* Payment History Section */}
+            <div 
+              className="rounded-lg p-6 mt-8"
+              style={{
+                backgroundColor: 'var(--nillion-bg-secondary)',
+                border: '1px solid var(--nillion-border)',
+              }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-white font-semibold">Payment History</h2>
+                <button
+                  type="button"
+                  onClick={fetchTransactions}
+                  disabled={loadingTransactions}
+                  className="px-3 py-1.5 rounded text-xs font-medium transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: '#ffffff',
+                    border: '1px solid var(--nillion-border)',
+                  }}
+                  title="Refresh payment history"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={loadingTransactions ? 'animate-spin' : ''}
+                  >
+                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+                  </svg>
+                  {loadingTransactions ? 'Refreshing...' : 'Refresh'}
+                </button>
+              </div>
+              
+              {loadingTransactions ? (
+                <p className="text-white opacity-80">Loading...</p>
+              ) : transactions.length === 0 ? (
+                <p className="text-white opacity-80">No payment history yet. Make your first top-up to see it here.</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid var(--nillion-border)' }}>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-white opacity-80">Date</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-white opacity-80">Amount</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-white opacity-80">Status</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-white opacity-80">Invoice/Receipt</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {transactions.map((transaction) => (
+                        <tr 
+                          key={transaction.id}
+                          style={{ borderBottom: '1px solid var(--nillion-border)' }}
+                        >
+                          <td className="py-3 px-4 text-sm text-white">
+                            {formatDate(transaction.created)}
+                          </td>
+                          <td className="py-3 px-4 text-sm text-white">
+                            ${transaction.amount.toFixed(2)} {transaction.currency.toUpperCase()}
+                          </td>
+                          <td className="py-3 px-4 text-sm">
+                            <span
+                              className="px-2 py-1 rounded text-xs font-medium"
+                              style={{
+                                backgroundColor: transaction.status === 'paid'
+                                  ? 'rgba(34, 197, 94, 0.2)'
+                                  : transaction.status === 'open'
+                                  ? 'rgba(251, 191, 36, 0.2)'
+                                  : 'rgba(239, 68, 68, 0.2)',
+                                color: transaction.status === 'paid'
+                                  ? '#22c55e'
+                                  : transaction.status === 'open'
+                                  ? '#fbbf24'
+                                  : '#ef4444',
+                              }}
+                            >
+                              {transaction.status === 'paid' ? 'Paid' : transaction.status === 'open' ? 'Pending' : transaction.status}
+                            </span>
+                          </td>
+                          <td className="py-3 px-4 text-sm">
+                            {transaction.hosted_invoice_url ? (
+                              <a
+                                href={transaction.hosted_invoice_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-3 py-1 rounded text-xs font-medium transition-opacity hover:opacity-90"
+                                style={{
+                                  backgroundColor: 'var(--nillion-primary)',
+                                  color: '#ffffff',
+                                }}
+                              >
+                                View
+                              </a>
+                            ) : (
+                              <span className="text-white opacity-50 text-xs">—</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {/* Customer Portal Link */}
+              <div className="mt-6 pt-6" style={{ borderTop: '1px solid var(--nillion-border)' }}>
+                <h3 className="mb-2 text-white font-medium">Customer Portal</h3>
+                <p className="text-sm text-white opacity-80 mb-4">
+                  Access your full billing history, download invoices, and manage payment methods and billing info.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleViewPortal}
+                  disabled={isOpeningPortal || transactions.length === 0}
+                  className="px-6 py-2 rounded-md text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: '#ffffff',
+                    border: '1px solid var(--nillion-border)',
+                  }}
+                >
+                  {isOpeningPortal ? 'Opening...' : 'Open Customer Portal'}
+                </button>
+                {transactions.length === 0 && (
+                  <p className="text-xs text-white opacity-60 mt-2">
+                    Make a payment first to access the customer portal
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </main>

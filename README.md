@@ -38,9 +38,7 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 
 # Privy (authentication)
 NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id
-
-# Optional: Base URL for Stripe redirects (defaults to request origin)
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
+PRIVY_APP_SECRET=your_privy_app_secret
 ```
 
 ## Tech Stack
