@@ -53,6 +53,18 @@ export async function POST(request: NextRequest) {
 
       // Only process if payment was successful
       if (session.payment_status === 'paid') {
+        // Link Stripe customer to our user_id (needed for wallet-only users: Stripe creates
+        // the customer at checkout, so only the webhook can set metadata for payment history/portal)
+        if (session.customer) {
+          try {
+            await stripe.customers.update(session.customer as string, {
+              metadata: { user_id },
+            })
+          } catch (updateError) {
+            console.warn('Failed to update customer metadata:', updateError)
+          }
+        }
+
         // Make request to the credit service to add credits
         const response = await fetch(`${CREDIT_SERVICE_URL}users/topup`, {
           method: 'POST',
