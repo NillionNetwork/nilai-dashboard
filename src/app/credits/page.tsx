@@ -326,7 +326,36 @@ function CreditsContent() {
                 border: '1px solid var(--nillion-border)',
               }}
             >
-              <h2 className="mb-4 text-white font-semibold">Payment History</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-white font-semibold">Payment History</h2>
+                <button
+                  type="button"
+                  onClick={fetchTransactions}
+                  disabled={loadingTransactions}
+                  className="px-3 py-1.5 rounded text-xs font-medium transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: '#ffffff',
+                    border: '1px solid var(--nillion-border)',
+                  }}
+                  title="Refresh payment history"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={loadingTransactions ? 'animate-spin' : ''}
+                  >
+                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+                  </svg>
+                  {loadingTransactions ? 'Refreshing...' : 'Refresh'}
+                </button>
+              </div>
               
               {loadingTransactions ? (
                 <p className="text-white opacity-80">Loading...</p>
