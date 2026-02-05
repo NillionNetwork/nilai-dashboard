@@ -1,10 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { v4 as uuidv4 } from 'uuid'
+import Link from 'next/link'
 import Sidebar from '@/components/Sidebar'
 import Header from '@/components/Header'
 import { usePrivy } from '@privy-io/react-auth'
+import { useUserCredits } from '@/hooks/useUserCredits'
 
 interface Credential {
   credential_id: string
@@ -18,6 +20,7 @@ interface Credential {
 
 export default function ApiKeysPage() {
   const { authenticated, user, ready, login } = usePrivy()
+  const { balance } = useUserCredits()
   const [credentials, setCredentials] = useState<Credential[]>([])
   const [loading, setLoading] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
@@ -26,6 +29,7 @@ export default function ApiKeysPage() {
   const [isCreating, setIsCreating] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [hasPaymentHistory, setHasPaymentHistory] = useState<boolean | null>(null)
 
   // Separate credentials into API keys and DIDs
   const apiKeys = credentials.filter(c => !c.credential_key.startsWith('did:key:'))
@@ -50,11 +54,52 @@ export default function ApiKeysPage() {
     }
   }
 
+  // Check if user has payment history
+  const checkPaymentHistory = useCallback(async () => {
+    if (!authenticated || !user) {
+      setHasPaymentHistory(null)
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/stripe/invoices?user_id=${user.id}`)
+      if (response.ok) {
+        const data = await response.json()
+        setHasPaymentHistory((data.transactions || []).length > 0)
+      } else {
+        setHasPaymentHistory(false)
+      }
+    } catch (error) {
+      console.error('Error checking payment history:', error)
+      setHasPaymentHistory(false)
+    }
+  }, [authenticated, user])
+
   useEffect(() => {
     if (ready && authenticated && user) {
       fetchCredentials()
+      checkPaymentHistory()
     }
-  }, [ready, authenticated, user])
+  }, [ready, authenticated, user, checkPaymentHistory])
+
+  // Check if user is new (no credits and no payment history)
+  const isNewUser = balance !== null && balance <= 0 && hasPaymentHistory === false
+
+  const handleCreateClick = () => {
+    if (isNewUser) {
+      setError('Please add credits first before creating API keys. Visit the Credits page to get started.')
+      return
+    }
+    setShowCreateModal(true)
+  }
+
+  const handleCreateDidClick = () => {
+    if (isNewUser) {
+      setError('Please add credits first before adding DIDs. Visit the Credits page to get started.')
+      return
+    }
+    setShowCreateDidModal(true)
+  }
 
   const handleCreate = async () => {
     if (!user) {
@@ -305,6 +350,21 @@ export default function ApiKeysPage() {
             {error && (
               <div className="mb-4 p-3 rounded-md text-sm" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>
                 {error}
+                {error.includes('add credits first') && (
+                  <div className="mt-3">
+                    <Link
+                      href="/credits"
+                      className="px-4 py-2 rounded-md text-sm font-medium transition-opacity hover:opacity-90 inline-block"
+                      style={{
+                        backgroundColor: 'var(--nillion-primary)',
+                        color: '#ffffff',
+                        border: 'none',
+                      }}
+                    >
+                      Go to Credits Page →
+                    </Link>
+                  </div>
+                )}
               </div>
             )}
 
@@ -338,7 +398,7 @@ export default function ApiKeysPage() {
                     </div>
                     <button
                       type="button"
-                      onClick={() => setShowCreateModal(true)}
+                      onClick={handleCreateClick}
                       className="px-4 py-2 rounded-md text-sm font-medium transition-opacity hover:opacity-90 flex items-center gap-2"
                       style={{
                         backgroundColor: 'var(--nillion-primary)',
@@ -373,7 +433,7 @@ export default function ApiKeysPage() {
                     </div>
                     <button
                       type="button"
-                      onClick={() => setShowCreateDidModal(true)}
+                      onClick={handleCreateDidClick}
                       className="px-4 py-2 rounded-md text-sm font-medium transition-opacity hover:opacity-90 flex items-center gap-2"
                       style={{
                         backgroundColor: 'var(--nillion-primary)',
