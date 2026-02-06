@@ -25,6 +25,18 @@ const nextConfig: NextConfig = {
               manifest-src 'self'
             `.replace(/\s+/g, ' ').trim(),
           },
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "X-Frame-Options",
+            value: "DENY",
+          },
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
         ],
       },
     ];
