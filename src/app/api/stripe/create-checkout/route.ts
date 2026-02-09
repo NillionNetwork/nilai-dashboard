@@ -102,6 +102,14 @@ export async function POST(request: NextRequest) {
       invoice_creation: {
         enabled: true,
       },
+      billing_address_collection: 'required',
+      tax_id_collection: {
+        enabled: true,
+      },
+      customer_update: {
+        name: 'auto',
+        address: 'auto',
+      },
       success_url: `${request.headers.get('origin') || 'http://localhost:3000'}/credits?success=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${request.headers.get('origin') || 'http://localhost:3000'}/credits?canceled=true`,
       metadata: {
