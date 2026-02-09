@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: 'Credits Top-up',
+              name: 'nilAI Credits Top-up',
               description: `Add $${amount.toFixed(2)} in credits to your account`,
             },
             unit_amount: Math.round(amount * 100), // Convert to cents
