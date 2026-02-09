@@ -13,7 +13,7 @@
     "@privy-io/react-auth": "^2.18.0",
     "@privy-io/server-auth": "^1.31.1",
     "@stripe/stripe-js": "^8.4.0",
-    "next": "16.1.0",
+    "next": "16.1.5",
     "react": "^19.2.1",
     "react-dom": "^19.1.0",
     "stripe": "^19.3.1",

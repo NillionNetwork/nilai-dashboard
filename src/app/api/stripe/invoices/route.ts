@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
         created: invoice.created,
         invoice_pdf: invoice.invoice_pdf,
         hosted_invoice_url: invoice.hosted_invoice_url,
-        description: invoice.description || invoice.lines?.data[0]?.description || 'Credits Top-up',
+        description: invoice.description || invoice.lines?.data[0]?.description || 'nilAI Credits Top-up',
       }))
 
     // Format checkout sessions (only include those without invoices)
@@ -86,7 +86,7 @@ export async function GET(request: NextRequest) {
           created: session.created,
           invoice_pdf: null,
           hosted_invoice_url: null,
-          description: `Credits Top-up - $${amount.toFixed(2)}`,
+          description: `nilAI Credits Top-up - $${amount.toFixed(2)}`,
         }
       })
 
