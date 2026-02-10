@@ -106,10 +106,6 @@ export async function POST(request: NextRequest) {
       tax_id_collection: {
         enabled: true,
       },
-      customer_update: {
-        name: 'auto',
-        address: 'auto',
-      },
       success_url: `${request.headers.get('origin') || 'http://localhost:3000'}/credits?success=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${request.headers.get('origin') || 'http://localhost:3000'}/credits?canceled=true`,
       metadata: {
@@ -121,6 +117,11 @@ export async function POST(request: NextRequest) {
     // Associate with customer if we have one, otherwise let Stripe create one
     if (customer && customer.id) {
       sessionParams.customer = customer.id
+      // customer_update is only valid when using an existing customer
+      sessionParams.customer_update = {
+        name: 'auto',
+        address: 'auto',
+      }
     } else if (customer_email) {
       // Pre-fill email if we have it, but let Stripe create customer
       sessionParams.customer_email = customer_email
