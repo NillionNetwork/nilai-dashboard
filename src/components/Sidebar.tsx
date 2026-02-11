@@ -17,6 +17,7 @@ const navigation = [
     items: [
       { name: 'API keys', href: '/api-keys' },
       { name: 'Credits', href: '/credits' },
+      { name: 'Usage', href: '/usage' },
     ],
   },
   {
