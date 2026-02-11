@@ -8,7 +8,6 @@ import Sidebar from '@/components/Sidebar'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { usePrivy } from '@privy-io/react-auth'
-import { useUserCredits } from '@/hooks/useUserCredits'
 import EC from 'elliptic'
 
 interface Credential {
@@ -24,7 +23,6 @@ interface Credential {
 export default function ApiKeysPage() {
   const router = useRouter()
   const { authenticated, user, ready } = usePrivy()
-  const { balance } = useUserCredits()
   const [credentials, setCredentials] = useState<Credential[]>([])
   const [loading, setLoading] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
@@ -93,20 +91,22 @@ export default function ApiKeysPage() {
     }
   }, [ready, authenticated, user, checkPaymentHistory])
 
-  // Check if user is new (no credits and no payment history)
-  const isNewUser = balance !== null && balance <= 0 && hasPaymentHistory === false
+  // Check if user is trial (no payment history)
+  const isTrialUser = hasPaymentHistory === false
 
   const handleCreateClick = () => {
-    if (isNewUser) {
-      setError('Please add credits first before creating API keys. Visit the Credits page to get started.')
+    // Check trial user limits: only 1 API key allowed
+    if (isTrialUser && apiKeys.length >= 1) {
+      setError('Trial users can create only 1 API key. Make a payment to create more.')
       return
     }
     setShowCreateModal(true)
   }
 
   const handleCreateDidClick = () => {
-    if (isNewUser) {
-      setError('Please add credits first before adding DIDs. Visit the Credits page to get started.')
+    // Check trial user limits: only 1 DID allowed
+    if (isTrialUser && dids.length >= 1) {
+      setError('Trial users can create only 1 DID. Make a payment to create more.')
       return
     }
     setDidCreationMode('generate')
@@ -236,6 +236,12 @@ export default function ApiKeysPage() {
   }
 
   const handleDelete = async (credentialId: string) => {
+    // Prevent deletion for trial users
+    if (isTrialUser) {
+      setError('Trial users cannot delete credentials. Make a payment to unlock this feature.')
+      return
+    }
+
     if (!confirm('Are you sure you want to delete this credential?')) {
       return
     }
@@ -429,12 +435,14 @@ export default function ApiKeysPage() {
                   <button
                     type="button"
                     onClick={() => handleDelete(credential.credential_id)}
-                    className="px-3 py-1 rounded-md text-sm font-medium transition-opacity hover:opacity-90"
+                    disabled={isTrialUser}
+                    className="px-3 py-1 rounded-md text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{
                       backgroundColor: 'rgba(239, 68, 68, 0.1)',
                       color: '#ef4444',
                       border: '1px solid rgba(239, 68, 68, 0.3)',
                     }}
+                    title={isTrialUser ? 'Trial users cannot delete credentials. Make a payment to unlock this feature.' : 'Delete credential'}
                   >
                     Delete
                   </button>
@@ -449,18 +457,18 @@ export default function ApiKeysPage() {
 
   if (!authenticated) {
     return (
-      <div className="min-h-screen" style={{ backgroundColor: 'var(--nillion-bg)' }}>
+      <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--nillion-bg)' }}>
         <Sidebar />
-        <div className="ml-64">
+        <div className="ml-64 flex flex-col flex-1">
           <Header />
-          <main className="p-8">
+          <main className="p-8 flex-1">
             <div className="max-w-6xl">
               <h1 className="mb-2 text-white">API keys</h1>
               <p className="text-white opacity-80 mb-6">Please log in to manage your API keys.</p>
             </div>
           </main>
+          <Footer />
         </div>
-        <Footer />
       </div>
     )
   }
@@ -497,6 +505,29 @@ export default function ApiKeysPage() {
               </div>
             )}
 
+            {isTrialUser && (
+              <div className="mb-4 p-4 rounded-md text-sm" style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
+                <div className="flex items-start gap-3">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: '#3b82f6', marginTop: '2px', flexShrink: 0 }}>
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="16" x2="12" y2="12" />
+                    <line x1="12" y1="8" x2="12.01" y2="8" />
+                  </svg>
+                  <div>
+                    <p className="text-white font-medium mb-1">Trial Account</p>
+                    <p className="text-white opacity-80 text-sm">
+                      You're on a trial account with $1 in credits. You can create 1 API key and 1 DID. 
+                      Credentials cannot be deleted until you become a paying customer.{' '}
+                      <Link href="/credits" className="underline hover:opacity-80" style={{ color: '#3b82f6' }}>
+                        Add credits
+                      </Link>
+                      {' '}to unlock full features.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {success && (
               <div className="mb-4 p-3 rounded-md text-sm" style={{ backgroundColor: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>
                 {success}
@@ -509,20 +540,29 @@ export default function ApiKeysPage() {
               <>
                 {/* API Keys Section */}
                 <div className="mb-12">
-                  <div className="flex items-center justify-end mb-4">
-                    <button
-                      type="button"
-                      onClick={handleCreateClick}
-                      className="px-4 py-2 rounded-md text-sm font-medium transition-opacity hover:opacity-90 flex items-center gap-2"
-                      style={{
-                        backgroundColor: 'var(--nillion-primary)',
-                        color: '#ffffff',
-                        border: 'none',
-                      }}
-                    >
-                      <span>+</span>
-                      <span>Create new API key</span>
-                    </button>
+                  <div className="flex items-center justify-between mb-4">
+                    {isTrialUser && (
+                      <p className="text-sm text-white opacity-70">
+                        Trial: {apiKeys.length}/1 API key created
+                      </p>
+                    )}
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={handleCreateClick}
+                        disabled={isTrialUser && apiKeys.length >= 1}
+                        className="px-4 py-2 rounded-md text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                        style={{
+                          backgroundColor: 'var(--nillion-primary)',
+                          color: '#ffffff',
+                          border: 'none',
+                        }}
+                        title={isTrialUser && apiKeys.length >= 1 ? 'Trial users can create only 1 API key. Make a payment to create more.' : ''}
+                      >
+                        <span>+</span>
+                        <span>Create new API key</span>
+                      </button>
+                    </div>
                   </div>
                   {renderCredentialsTable(apiKeys, 'No API keys found. Create your first key to get started.')}
                 </div>
@@ -552,20 +592,27 @@ export default function ApiKeysPage() {
                         <h2 className="text-xl font-semibold text-white mb-1">
                           Public DIDs <span className="text-sm font-normal opacity-70">(Advanced)</span>
                         </h2>
-                        <p className="text-sm text-white opacity-70">
-                          For use with the nilAI SDKs. See the {' '}
-                          <a 
-                            href="https://docs.nillion.com/build/private-llms/usage"
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="underline hover:opacity-80"
-                            style={{ color: 'var(--nillion-primary)' }}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            docs
-                          </a>
-                          .
-                        </p>
+                        <div>
+                          <p className="text-sm text-white opacity-70">
+                            For use with the nilAI SDKs. See the {' '}
+                            <a 
+                              href="https://docs.nillion.com/build/private-llms/usage"
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="underline hover:opacity-80"
+                              style={{ color: 'var(--nillion-primary)' }}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              docs
+                            </a>
+                            .
+                          </p>
+                          {isTrialUser && (
+                            <p className="text-sm text-white opacity-70 mt-1">
+                              Trial: {dids.length}/1 DID created
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </div>
                     <button
@@ -575,12 +622,14 @@ export default function ApiKeysPage() {
                         setDidSectionExpanded(true)
                         handleCreateDidClick()
                       }}
-                      className="px-4 py-2 rounded-md text-sm font-medium transition-opacity hover:opacity-90 flex items-center gap-2"
+                      disabled={isTrialUser && dids.length >= 1}
+                      className="px-4 py-2 rounded-md text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                       style={{
                         backgroundColor: 'var(--nillion-primary)',
                         color: '#ffffff',
                         border: 'none',
                       }}
+                      title={isTrialUser && dids.length >= 1 ? 'Trial users can create only 1 DID. Make a payment to create more.' : ''}
                     >
                       <span>+</span>
                       <span>Add DID</span>
