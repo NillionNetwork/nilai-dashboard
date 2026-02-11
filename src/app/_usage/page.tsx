@@ -84,7 +84,7 @@ export default function UsagePage() {
                   border: 'none',
                 }}
               >
-                {!ready ? 'Loading...' : 'Login with Privy'}
+                {!ready ? 'Loading...' : 'Login'}
               </button>
             </div>
           </main>
