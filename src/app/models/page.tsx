@@ -2,17 +2,13 @@
 
 import Sidebar from '@/components/Sidebar'
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 const models = [
   {
     name: 'google/gemma-3-27b-it',
     url: 'https://huggingface.co/google/gemma-3-27b-it',
     price: '$0.12',
-  },
-  {
-    name: 'meta-llama/Llama-3.1-8B',
-    url: 'https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct',
-    price: '$0.6',
   },
   {
     name: 'openai/gpt-oss-20b',
@@ -23,14 +19,14 @@ const models = [
 
 export default function ModelsPage() {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--nillion-bg)' }}>
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--nillion-bg)' }}>
       <Sidebar />
-      <div className="ml-64">
+      <div className="ml-64 flex flex-col flex-1">
         <Header />
-        <main className="p-8">
+        <main className="p-8 flex-1">
           <div className="max-w-6xl">
             <h1 className="mb-2 text-white">
-              Models & Pricing
+              Models
             </h1>
             <p className="mb-8 text-white opacity-80">
               Explore available models and their pricing.
@@ -73,6 +69,7 @@ export default function ModelsPage() {
             </div>
           </div>
         </main>
+        <Footer />
       </div>
     </div>
   )
