@@ -2,54 +2,47 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { usePrivy } from '@privy-io/react-auth'
 
 const navigation = [
   {
     section: 'GET STARTED',
     items: [
       { name: 'Quickstart', href: '/' },
-      { name: 'Models & Pricing', href: '/models' },
+      { name: 'SDKs', href: '/sdks' },
+      { name: 'Models', href: '/models' },
     ],
   },
   {
     section: 'MANAGE',
     items: [
       { name: 'API keys', href: '/api-keys' },
-      { name: 'Get credits', href: '/credits' },
+      { name: 'Credits', href: '/credits' },
     ],
   },
   {
     section: 'OPTIMIZE',
     items: [
-      { name: 'Docs', href: 'https://docs.nillion.com/build/private-llms/quickstart', external: true },
+      { name: 'Docs', href: 'https://docs.nillion.com/blind-computer/build/llms/overview', external: true },
+      { name: 'API reference', href: 'https://api.nilai.nillion.network/docs', external: true },
     ],
   },
 ]
 
 export default function Sidebar() {
   const pathname = usePathname()
-  const { authenticated } = usePrivy()
 
   return (
     <div className="fixed left-0 top-0 h-full w-64 overflow-y-auto" style={{ backgroundColor: 'var(--nillion-bg)', borderRight: '1px solid var(--nillion-border)' }}>
       <div className="p-6">
         <div className="flex items-center gap-2 mb-8">
-          <div className="w-8 h-8 rounded flex items-center justify-center" style={{ backgroundColor: 'var(--nillion-primary)' }}>
-            <svg 
-              width="20" 
-              height="20" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="white" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-            >
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5" />
-              <path d="M2 12l10 5 10-5" />
-            </svg>
+          <div className="w-8 h-8 rounded flex items-center justify-center overflow-hidden" style={{ backgroundColor: 'var(--nillion-primary)' }}>
+            <img 
+              src="/favicon-32x32.png" 
+              alt="nilAI" 
+              width="32" 
+              height="32"
+              className="w-full h-full object-contain"
+            />
           </div>
           <span className="text-lg font-semibold text-white">nilAI Dashboard</span>
         </div>

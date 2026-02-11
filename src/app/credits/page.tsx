@@ -4,13 +4,14 @@ import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Sidebar from '@/components/Sidebar'
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 import { usePrivy } from '@privy-io/react-auth'
 import { useUserCredits } from '@/hooks/useUserCredits'
 
 const TOPUP_AMOUNTS = [10, 25, 50, 100, 250, 500]
 
 function CreditsContent() {
-  const { authenticated, user, login, ready } = usePrivy()
+  const { authenticated, user } = usePrivy()
   const { balance, loading } = useUserCredits()
   const searchParams = useSearchParams()
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null)
@@ -174,8 +175,9 @@ function CreditsContent() {
       const { url } = await response.json()
       
       if (url) {
-        // Redirect to Stripe Customer Portal
-        window.location.href = url
+        // Open Stripe Customer Portal in new tab
+        window.open(url, '_blank', 'noopener,noreferrer')
+        setIsOpeningPortal(false)
       } else {
         throw new Error('No portal URL received')
       }
@@ -187,27 +189,14 @@ function CreditsContent() {
 
   if (!authenticated) {
     return (
-      <div className="min-h-screen" style={{ backgroundColor: 'var(--nillion-bg)' }}>
+      <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--nillion-bg)' }}>
         <Sidebar />
-        <div className="ml-64">
+        <div className="ml-64 flex flex-col flex-1">
           <Header />
-          <main className="p-8">
+          <main className="p-8 flex-1">
             <div className="max-w-4xl">
-              <h1 className="mb-2 text-white">Get Credits</h1>
+              <h1 className="mb-2 text-white">Credits</h1>
               <p className="text-white opacity-80 mb-6">Please log in to manage your credits.</p>
-              <button
-                type="button"
-                onClick={() => login()}
-                disabled={!ready}
-                className="px-6 py-3 rounded-md text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{
-                  backgroundColor: 'var(--nillion-primary)',
-                  color: '#ffffff',
-                  border: 'none',
-                }}
-              >
-                {!ready ? 'Loading...' : 'Login with Privy'}
-              </button>
             </div>
           </main>
         </div>
@@ -216,13 +205,13 @@ function CreditsContent() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--nillion-bg)' }}>
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--nillion-bg)' }}>
       <Sidebar />
-      <div className="ml-64">
+      <div className="ml-64 flex flex-col flex-1">
         <Header />
-        <main className="p-8">
+        <main className="p-8 flex-1">
           <div className="max-w-4xl">
-            <h1 className="mb-2 text-white">Get Credits</h1>
+            <h1 className="mb-2 text-white">Credits</h1>
             
             <div 
               className="rounded-lg p-6 mt-8"
@@ -456,6 +445,7 @@ function CreditsContent() {
             </div>
           </div>
         </main>
+        <Footer />
       </div>
     </div>
   )
@@ -464,13 +454,13 @@ function CreditsContent() {
 export default function CreditsPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen" style={{ backgroundColor: 'var(--nillion-bg)' }}>
+      <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--nillion-bg)' }}>
         <Sidebar />
-        <div className="ml-64">
+        <div className="ml-64 flex flex-col flex-1">
           <Header />
-          <main className="p-8">
+          <main className="p-8 flex-1">
             <div className="max-w-4xl">
-              <h1 className="mb-2 text-white">Get Credits</h1>
+              <h1 className="mb-2 text-white">Credits</h1>
               <p className="text-white opacity-80">Loading...</p>
             </div>
           </main>
