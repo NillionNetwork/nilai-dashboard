@@ -199,6 +199,7 @@ function CreditsContent() {
               <p className="text-white opacity-80 mb-6">Please log in to manage your credits.</p>
             </div>
           </main>
+          <Footer />
         </div>
       </div>
     )
@@ -464,6 +465,7 @@ export default function CreditsPage() {
               <p className="text-white opacity-80">Loading...</p>
             </div>
           </main>
+          <Footer />
         </div>
       </div>
     }>
