@@ -384,7 +384,7 @@ export default function ApiKeysPage() {
                     {!credential.credential_key.startsWith('did:nil:') && (
                       <button
                         type="button"
-                        onClick={() => copyToClipboard(credential.credential_key, credential.credential_id, 'API key')}
+                        onClick={() => copyToClipboard(credential.credential_key, credential.credential_id)}
                         className="p-1.5 rounded transition-all duration-300 hover:opacity-90 shrink-0"
                         style={{
                           backgroundColor: copiedKeyId === credential.credential_id 
