@@ -67,7 +67,7 @@ export default function UsagePage() {
     return (
       <div className="min-h-screen" style={{ backgroundColor: 'var(--nillion-bg)' }}>
         <Sidebar />
-        <div className="ml-64">
+        <div className="md:ml-64">
           <Header />
           <main className="p-8">
             <div className="max-w-6xl">
@@ -96,7 +96,7 @@ export default function UsagePage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--nillion-bg)' }}>
       <Sidebar />
-      <div className="ml-64">
+      <div className="md:ml-64">
         <Header />
         <main className="p-8">
           <div className="max-w-6xl">

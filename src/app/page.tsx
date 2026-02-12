@@ -1,23 +1,19 @@
 'use client'
 
-import { useState, useEffect, Suspense, useRef } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import Sidebar from '@/components/Sidebar'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
 import CodeBlock from '@/components/CodeBlock'
 
 function HomeContent() {
   const searchParams = useSearchParams()
   const [apiKey, setApiKey] = useState('')
-  const leftColumnRef = useRef<HTMLDivElement>(null)
-  const rightColumnRef = useRef<HTMLDivElement>(null)
   const [isExecuting, setIsExecuting] = useState(false)
   const [response, setResponse] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
+  const [showCurlPreview, setShowCurlPreview] = useState(false)
   
   // Editable curl parameters
   const [model, setModel] = useState('openai/gpt-oss-20b')
@@ -30,27 +26,6 @@ function HomeContent() {
       setApiKey(decodeURIComponent(apiKeyParam))
     }
   }, [searchParams])
-
-  // Match right column height to left column height
-  useEffect(() => {
-    const updateHeight = () => {
-      if (leftColumnRef.current && rightColumnRef.current) {
-        const leftHeight = leftColumnRef.current.offsetHeight
-        rightColumnRef.current.style.height = `${leftHeight}px`
-      }
-    }
-
-    updateHeight()
-    window.addEventListener('resize', updateHeight)
-    
-    // Also update when response changes
-    const timeoutId = setTimeout(updateHeight, 100)
-
-    return () => {
-      window.removeEventListener('resize', updateHeight)
-      clearTimeout(timeoutId)
-    }
-  }, [response, error, model, content])
 
   const apiUrl = 'https://api.nilai.nillion.network/v1/responses'
 
@@ -146,20 +121,15 @@ function HomeContent() {
   })()
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--nillion-bg)' }}>
-      <Sidebar />
-      <div className="ml-64 flex flex-col flex-1">
-        <Header />
-        <main className="p-8 flex-1">
-          <div className="max-w-4xl">
-            <h1 className="mb-2 text-white">
-              Developer quickstart
-            </h1>
-            <p className="mb-8 text-white opacity-80">
-              Follow these steps to get started with nilAI.
-            </p>
+    <div className="max-w-6xl">
+      <h1 className="mb-2 text-white">
+        Developer quickstart
+      </h1>
+      <p className="mb-8 text-white opacity-80">
+        Follow these steps to get started with nilAI.
+      </p>
 
-            <div className="space-y-8">
+      <div className="space-y-8">
               {/* Primary Flow */}
               {/* Step 1: Get API Key */}
               <div>
@@ -217,7 +187,7 @@ function HomeContent() {
                 </div>
               </div>
 
-              {/* Step 2: Execute curl */}
+              {/* Step 2: Make Request */}
               <div>
                 <h2 className="mb-4 text-white">
                   2. Make your first request
@@ -225,11 +195,21 @@ function HomeContent() {
                 <p className="mb-4 text-white opacity-80 text-sm">
                   Customize the request parameters below, then execute the curl command to test your API key.
                 </p>
-                
+
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Left column: Parameters and Code */}
-                  <div ref={leftColumnRef} className="space-y-4">
-                    <div className="space-y-4">
+                  <div
+                    className="rounded-lg p-6 min-h-[320px] h-full w-full overflow-hidden min-w-0"
+                    style={{
+                      backgroundColor: 'var(--nillion-bg-secondary)',
+                      border: '1px solid var(--nillion-border)',
+                    }}
+                  >
+                    <div>
+                      <h3 className="text-base font-semibold text-white">Request</h3>
+                      <p className="text-xs text-white opacity-70 mt-1">Configure inputs, then send.</p>
+                    </div>
+
+                    <div className="mt-4 space-y-4">
                       <div>
                         <label className="block text-sm text-white opacity-80 mb-2">Model</label>
                         <select
@@ -248,7 +228,7 @@ function HomeContent() {
                       </div>
                       
                       <div>
-                        <label className="block text-sm text-white opacity-80 mb-2">Content</label>
+                        <label className="block text-sm text-white opacity-80 mb-2">Input Content</label>
                         <input
                           type="text"
                           value={content}
@@ -268,51 +248,82 @@ function HomeContent() {
                         />
                       </div>
                     </div>
-                    
-                    <CodeBlock enhanced={true} code={curlCommand} />
-                  </div>
 
-                  {/* Right column: Execute Button and Response */}
-                  <div ref={rightColumnRef} className="space-y-4 flex flex-col">
-                    {/* Execute Request Text and Button - always visible */}
-                    <div className="space-y-4 shrink-0">
-                      <p className="text-center text-white text-sm font-medium">Execute Request</p>
+                    <div className="mt-3 flex flex-col items-start gap-3">
                       <button
                         onClick={executeCurl}
                         disabled={isExecuting || !apiKey.trim()}
-                        className="w-full px-6 py-4 rounded-lg text-sm font-semibold transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 relative overflow-hidden group"
+                        className="px-5 py-2.5 rounded-md text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                         style={{
-                          background: 'linear-gradient(135deg, var(--nillion-primary) 0%, #3b82f6 100%)',
+                          backgroundColor: 'var(--nillion-primary)',
                           color: '#ffffff',
                           border: 'none',
-                          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
                         }}
                       >
-                        <span className="relative z-10 flex items-center justify-center gap-2">
-                          {isExecuting ? (
-                            <>
-                              <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                              </svg>
-                              Executing...
-                            </>
-                          ) : (
-                            <>
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                              </svg>
-                              Send Request
-                            </>
-                          )}
-                        </span>
-                        <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                        {isExecuting ? 'Executing...' : 'Send Request'}
                       </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setShowCurlPreview((prev) => !prev)}
+                        className="inline-flex items-center gap-2 text-sm font-medium transition-opacity hover:opacity-90 focus:outline-none"
+                        style={{
+                          color: '#ffffff',
+                          backgroundColor: 'transparent',
+                          border: 'none',
+                          padding: 0,
+                          boxShadow: 'none',
+                          transform: 'none',
+                          appearance: 'none',
+                        }}
+                      >
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className={`transition-transform duration-200 ${showCurlPreview ? 'rotate-180' : ''}`}
+                        >
+                          <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                        <span>CURL preview</span>
+                      </button>
+
+                      {showCurlPreview && (
+                        <div className="w-full max-w-full min-w-0 mt-2">
+                          <CodeBlock enhanced={true} code={curlCommand} />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div
+                    className="rounded-lg p-6 space-y-4 min-h-[320px] h-full"
+                    style={{
+                      backgroundColor: 'var(--nillion-bg-secondary)',
+                      border: '1px solid var(--nillion-border)',
+                    }}
+                  >
+                    <div>
+                      <h3 className="text-base font-semibold text-white">Result</h3>
+                      <p className="text-xs text-white opacity-70 mt-1">Response or error appears here.</p>
                     </div>
 
-                    {/* Error Response - shown below button */}
+                    {!response && !error && (
+                      <div
+                        className="rounded-md p-4 text-sm text-white opacity-70"
+                        style={{ border: '1px dashed var(--nillion-border)' }}
+                      >
+                        No response yet. Send a request to see output.
+                      </div>
+                    )}
+
                     {error && (
-                      <div className="p-4 rounded-md flex-1 min-h-0 overflow-y-auto" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
+                      <div className="p-4 rounded-md overflow-y-auto" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
                         <p className="text-sm text-red-400 font-semibold mb-2">Error</p>
                         <p className="text-sm text-red-300">{error}</p>
                         {response && (
@@ -323,9 +334,8 @@ function HomeContent() {
                       </div>
                     )}
 
-                    {/* Success Response - shown below button */}
                     {response && !error && (
-                      <div className="p-4 rounded-md flex-1 min-h-0 overflow-y-auto" style={{ backgroundColor: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.3)' }}>
+                      <div className="p-4 rounded-md overflow-y-auto" style={{ backgroundColor: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.3)' }}>
                         <p className="text-sm text-green-400 font-semibold mb-3">Response</p>
                         <div className="text-sm text-white">
                           <ReactMarkdown
@@ -371,10 +381,6 @@ function HomeContent() {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </main>
-        <Footer />
       </div>
     </div>
   )
@@ -383,16 +389,8 @@ function HomeContent() {
 export default function Home() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--nillion-bg)' }}>
-        <Sidebar />
-        <div className="ml-64 flex flex-col flex-1">
-          <Header />
-          <main className="p-8 flex-1">
-            <div className="max-w-4xl">
-              <p className="text-white opacity-80">Loading...</p>
-            </div>
-          </main>
-        </div>
+      <div className="max-w-4xl">
+        <p className="text-white opacity-80">Loading...</p>
       </div>
     }>
       <HomeContent />

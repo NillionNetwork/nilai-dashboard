@@ -2,9 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import Sidebar from '@/components/Sidebar'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
 import CodeBlock from '@/components/CodeBlock'
 import Tabs from '@/components/Tabs'
 
@@ -12,93 +9,88 @@ export default function SDKsPage() {
   const [selectedLanguage, setSelectedLanguage] = useState<'ts' | 'python'>('ts')
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--nillion-bg)' }}>
-      <Sidebar />
-      <div className="ml-64 flex flex-col flex-1">
-        <Header />
-        <main className="p-8 flex-1">
-          <div className="max-w-4xl">
-            <h1 className="mb-2 text-white">
-              Using the nilAI SDKs
-            </h1>
-            <p className="mb-8 text-white opacity-80">
-              Follow these steps to integrate nilAI into your application using our SDKs.
-            </p>
+    <div className="max-w-4xl">
+      <h1 className="mb-2 text-white">
+        Using the nilAI SDKs
+      </h1>
+      <p className="mb-8 text-white opacity-80">
+        Follow these steps to integrate nilAI into your application using our SDKs.
+      </p>
 
-            <div className="space-y-8">
-              {/* Step 1: Register DID */}
-              <div>
-                <h2 className="mb-4 text-white">
-                  1. Register a DID
-                </h2>
-                <p className="mb-4 text-white opacity-80 text-sm">
-                  Go to the API keys page and register a Public DID. Save the private key securely - you'll need it for SDK configuration.
-                </p>
-                <div className="mt-4">
-                  <Link
-                    href="/api-keys"
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-medium transition-opacity hover:opacity-90"
-                    style={{
-                      backgroundColor: 'var(--nillion-primary)',
-                      color: '#ffffff',
-                      border: 'none',
-                    }}
-                  >
-                    <span>Go to API keys page</span>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="inline-block"
-                    >
-                      <path
-                        d="M6 12L10 8L6 4"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </Link>
-                </div>
-              </div>
+      <div className="space-y-8">
+        {/* Step 1: Register DID */}
+        <div>
+          <h2 className="mb-4 text-white">
+            1. Register a DID
+          </h2>
+          <p className="mb-4 text-white opacity-80 text-sm">
+            Go to the API keys page and register a Public DID. Save the private key securely - you'll need it for SDK configuration.
+          </p>
+          <div className="mt-4">
+            <Link
+              href="/api-keys"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-medium transition-opacity hover:opacity-90"
+              style={{
+                backgroundColor: 'var(--nillion-primary)',
+                color: '#ffffff',
+                border: 'none',
+              }}
+            >
+              <span>Go to API keys page</span>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="inline-block"
+              >
+                <path
+                  d="M6 12L10 8L6 4"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </Link>
+          </div>
+        </div>
 
-              {/* Step 2: Install SDK */}
-              <div>
-                <h2 className="mb-4 text-white">
-                  2. Install the SDK
-                </h2>
-                <Tabs
-                  tabs={[
-                    { id: 'ts', label: 'TypeScript' },
-                    { id: 'python', label: 'Python' },
-                  ]}
-                  activeTab={selectedLanguage}
-                  onTabChange={(tabId) => setSelectedLanguage(tabId as 'ts' | 'python')}
-                >
-                  {(activeTab) => (
-                    <CodeBlock 
-                      enhanced={true}
-                      code={activeTab === 'ts' 
-                        ? 'pnpm install @nillion/nilai-ts' 
-                        : 'pip install nilai-py'} 
-                    />
-                  )}
-                </Tabs>
-              </div>
+        {/* Step 2: Install SDK */}
+        <div>
+          <h2 className="mb-4 text-white">
+            2. Install the SDK
+          </h2>
+          <Tabs
+            tabs={[
+              { id: 'ts', label: 'TypeScript' },
+              { id: 'python', label: 'Python' },
+            ]}
+            activeTab={selectedLanguage}
+            onTabChange={(tabId) => setSelectedLanguage(tabId as 'ts' | 'python')}
+          >
+            {(activeTab) => (
+              <CodeBlock
+                enhanced={true}
+                code={activeTab === 'ts'
+                  ? 'pnpm install @nillion/nilai-ts'
+                  : 'pip install nilai-py'}
+              />
+            )}
+          </Tabs>
+        </div>
 
-              {/* Step 3: Make completion */}
-              <div>
-                <h2 className="mb-4 text-white">
-                  3. Make a completion
-                </h2>
-                <CodeBlock 
-                  enhanced={true}
-                  language={selectedLanguage}
-                  code={selectedLanguage === 'ts' 
-                    ? `import { NilaiOpenAIClient, NilAuthInstance } from "@nillion/nilai-ts";
+        {/* Step 3: Make completion */}
+        <div>
+          <h2 className="mb-4 text-white">
+            3. Make a completion
+          </h2>
+          <CodeBlock
+            enhanced={true}
+            language={selectedLanguage}
+            code={selectedLanguage === 'ts'
+              ? `import { NilaiOpenAIClient, NilAuthInstance } from "@nillion/nilai-ts";
 
 const API_KEY = "YOUR_PRIVATE_KEY_HERE";
 
@@ -153,13 +145,9 @@ def main():
             print(chunk.choices[0].delta.content, end="", flush=True)
 
 if __name__ == "__main__":
-    main()`} 
-                />
-              </div>
-            </div>
-          </div>
-        </main>
-        <Footer />
+    main()`}
+          />
+        </div>
       </div>
     </div>
   )

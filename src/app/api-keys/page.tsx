@@ -4,9 +4,6 @@ import { useState, useEffect, useCallback } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import Sidebar from '@/components/Sidebar'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
 import { usePrivy } from '@privy-io/react-auth'
 import EC from 'elliptic'
 
@@ -457,29 +454,15 @@ export default function ApiKeysPage() {
 
   if (!authenticated) {
     return (
-      <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--nillion-bg)' }}>
-        <Sidebar />
-        <div className="ml-64 flex flex-col flex-1">
-          <Header />
-          <main className="p-8 flex-1">
-            <div className="max-w-6xl">
-              <h1 className="mb-2 text-white">API keys</h1>
-              <p className="text-white opacity-80 mb-6">Please log in to manage your API keys.</p>
-            </div>
-          </main>
-          <Footer />
-        </div>
+      <div className="max-w-6xl">
+        <h1 className="mb-2 text-white">API keys</h1>
+        <p className="text-white opacity-80 mb-6">Please log in to manage your API keys.</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--nillion-bg)' }}>
-      <Sidebar />
-      <div className="ml-64 flex flex-col flex-1">
-        <Header />
-        <main className="p-8 flex-1">
-          <div className="max-w-6xl">
+    <div className="max-w-6xl">
             <div className="mb-6">
               <h1 className="text-white mb-2">API keys</h1>
             </div>
@@ -643,10 +626,6 @@ export default function ApiKeysPage() {
                 </div>
               </>
             )}
-          </div>
-        </main>
-        <Footer />
-      </div>
 
       {/* Create API Key Modal */}
       {showCreateModal && (
@@ -942,4 +921,3 @@ export default function ApiKeysPage() {
     </div>
   )
 }
-

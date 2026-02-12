@@ -70,15 +70,15 @@ export default function CodeBlock({ code, language, enhanced = false }: CodeBloc
     }
 
     return (
-      <div className="relative group">
+      <div className="relative group w-full max-w-full">
         <div 
-          className="rounded-lg p-4 pr-12 relative" 
+          className="rounded-lg p-4 pr-12 relative w-full max-w-full overflow-hidden" 
           style={{ 
             backgroundColor: '#1e1e2e',
             border: '1px solid #3a3a4a',
           }}
         >
-          <pre className="text-sm overflow-x-auto m-0" style={{ color: '#d4d4d4', fontFamily: 'monospace', lineHeight: '1.6' }}>
+          <pre className="text-sm overflow-x-auto m-0 w-full" style={{ color: '#d4d4d4', fontFamily: 'monospace', lineHeight: '1.6' }}>
             <code dangerouslySetInnerHTML={{ __html: highlightCode(code) }} />
           </pre>
           <button
@@ -100,15 +100,15 @@ export default function CodeBlock({ code, language, enhanced = false }: CodeBloc
 
   // Default styling
   return (
-    <div className="relative group">
+    <div className="relative group w-full max-w-full">
       <div 
-        className="rounded-lg p-4 pr-12 relative" 
+        className="rounded-lg p-4 pr-12 relative w-full max-w-full overflow-hidden" 
         style={{ 
           backgroundColor: 'var(--nillion-primary-lightest)', 
           border: '1px solid var(--nillion-primary-lighter)' 
         }}
       >
-        <pre className="text-sm overflow-x-auto m-0" style={{ color: '#1e3a8a', fontFamily: 'monospace' }}>
+        <pre className="text-sm overflow-x-auto m-0 w-full" style={{ color: '#1e3a8a', fontFamily: 'monospace' }}>
           <code>{code}</code>
         </pre>
         <button
