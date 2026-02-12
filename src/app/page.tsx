@@ -198,7 +198,7 @@ function HomeContent() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div
-                    className="rounded-lg p-6 min-h-[320px] h-full"
+                    className="rounded-lg p-6 min-h-[320px] h-full w-full overflow-hidden min-w-0"
                     style={{
                       backgroundColor: 'var(--nillion-bg-secondary)',
                       border: '1px solid var(--nillion-border)',
@@ -228,7 +228,7 @@ function HomeContent() {
                       </div>
                       
                       <div>
-                        <label className="block text-sm text-white opacity-80 mb-2">Content</label>
+                        <label className="block text-sm text-white opacity-80 mb-2">Input Content</label>
                         <input
                           type="text"
                           value={content}
@@ -294,7 +294,7 @@ function HomeContent() {
                       </button>
 
                       {showCurlPreview && (
-                        <div>
+                        <div className="w-full max-w-full min-w-0 mt-2">
                           <CodeBlock enhanced={true} code={curlCommand} />
                         </div>
                       )}
