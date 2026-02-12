@@ -249,7 +249,7 @@ export default function UsagePage() {
                         </div>
                         {usage.rateLimits && (
                           <div className="text-right">
-                            <p className="text-xs text-white opacity-70">Total Spending</p>
+                            <p className="text-xs text-white opacity-70">Last 30 Days</p>
                             <p className="text-lg font-semibold text-white">
                               {formatAmount(usage.rateLimits.current_spending.month)}
                               {usage.rateLimits.limit_per_month !== null && (

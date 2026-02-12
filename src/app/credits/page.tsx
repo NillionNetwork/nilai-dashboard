@@ -96,6 +96,11 @@ function CreditsContent() {
       return
     }
 
+    if (amount < 1) {
+      setError('Minimum top-up amount is $1.00')
+      return
+    }
+
     setIsToppingUp(true)
     setError(null)
     setSuccess(false)
