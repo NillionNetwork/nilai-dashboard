@@ -99,6 +99,9 @@ export async function POST(request: NextRequest) {
         },
       ],
       mode: 'payment',
+      automatic_tax: {
+        enabled: true,
+      },
       invoice_creation: {
         enabled: true,
       },
