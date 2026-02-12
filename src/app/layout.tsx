@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import PrivyProvider from '@/components/PrivyProvider'
+import Sidebar from '@/components/Sidebar'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
   title: 'nilAI Dashboard',
@@ -23,7 +26,16 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning>
         <PrivyProvider>
-          {children}
+          <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--nillion-bg)' }}>
+            <Sidebar />
+            <div className="md:ml-64 md:border-l md:border-l-[var(--nillion-border)] flex flex-col flex-1">
+              <Header />
+              <main className="px-8 pt-8 pb-16 flex-1">
+                {children}
+              </main>
+            </div>
+            <Footer />
+          </div>
         </PrivyProvider>
       </body>
     </html>

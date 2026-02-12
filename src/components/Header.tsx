@@ -19,7 +19,7 @@ export default function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-10 group" style={{ backgroundColor: 'var(--nillion-bg)', borderBottom: '1px solid var(--nillion-border)' }}>
+    <header className="sticky top-0 z-10 group" style={{ backgroundColor: 'var(--nillion-bg)' }}>
       <div className="px-8 py-4 flex items-center justify-end">
         <div className="flex items-center gap-4">
           {authenticated && (

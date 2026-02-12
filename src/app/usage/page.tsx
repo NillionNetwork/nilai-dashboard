@@ -1,9 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Sidebar from '@/components/Sidebar'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
 import { usePrivy } from '@privy-io/react-auth'
 
 interface Credential {
@@ -152,48 +149,25 @@ export default function UsagePage() {
     })
   }
 
-  if (!ready) {
+  if (!authenticated) {
     return (
-      <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--nillion-bg)' }}>
-        <Sidebar />
-        <div className="ml-64 flex flex-col flex-1">
-          <Header />
-          <main className="p-8 flex-1">
-            <div className="max-w-6xl">
-              <p className="text-white opacity-80">Loading...</p>
-            </div>
-          </main>
-          <Footer />
-        </div>
+      <div className="max-w-6xl">
+        <h1 className="mb-2 text-white">Usage</h1>
+        <p className="text-white opacity-80 mb-6">Please log in to view your usage statistics.</p>
       </div>
     )
   }
 
-  if (!authenticated) {
+  if (!ready) {
     return (
-      <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--nillion-bg)' }}>
-        <Sidebar />
-        <div className="ml-64 flex flex-col flex-1">
-          <Header />
-          <main className="p-8 flex-1">
-            <div className="max-w-6xl">
-              <h1 className="mb-2 text-white">Usage</h1>
-              <p className="text-white opacity-80 mb-6">Please log in to view your usage statistics.</p>
-            </div>
-          </main>
-          <Footer />
-        </div>
+      <div className="max-w-6xl">
+        <p className="text-white opacity-80">Loading...</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--nillion-bg)' }}>
-      <Sidebar />
-      <div className="ml-64 flex flex-col flex-1">
-        <Header />
-        <main className="p-8 flex-1">
-          <div className="max-w-6xl">
+    <div className="max-w-6xl">
             <h1 className="mb-2 text-white">Usage</h1>
             <p className="mb-8 text-white opacity-80">
               View spending and usage statistics for your credentials.
@@ -399,9 +373,5 @@ export default function UsagePage() {
               </div>
             )}
           </div>
-        </main>
-        <Footer />
-      </div>
-    </div>
   )
 }

@@ -2,9 +2,6 @@
 
 import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import Sidebar from '@/components/Sidebar'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
 import { usePrivy } from '@privy-io/react-auth'
 import { useUserCredits } from '@/hooks/useUserCredits'
 
@@ -189,29 +186,15 @@ function CreditsContent() {
 
   if (!authenticated) {
     return (
-      <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--nillion-bg)' }}>
-        <Sidebar />
-        <div className="ml-64 flex flex-col flex-1">
-          <Header />
-          <main className="p-8 flex-1">
-            <div className="max-w-4xl">
-              <h1 className="mb-2 text-white">Credits</h1>
-              <p className="text-white opacity-80 mb-6">Please log in to manage your credits.</p>
-            </div>
-          </main>
-          <Footer />
-        </div>
+      <div className="max-w-4xl">
+        <h1 className="mb-2 text-white">Credits</h1>
+        <p className="text-white opacity-80 mb-6">Please log in to manage your credits.</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--nillion-bg)' }}>
-      <Sidebar />
-      <div className="ml-64 flex flex-col flex-1">
-        <Header />
-        <main className="p-8 flex-1">
-          <div className="max-w-4xl">
+    <div className="max-w-4xl">
             <h1 className="mb-2 text-white">Credits</h1>
             
             <div 
@@ -322,12 +305,13 @@ function CreditsContent() {
                   type="button"
                   onClick={fetchTransactions}
                   disabled={loadingTransactions}
-                  className="px-3 py-1.5 rounded text-xs font-medium transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="p-2 rounded text-xs font-medium transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                   style={{
                     backgroundColor: 'transparent',
                     color: '#ffffff',
                     border: '1px solid var(--nillion-border)',
                   }}
+                  aria-label={loadingTransactions ? 'Refreshing payment history' : 'Refresh payment history'}
                   title="Refresh payment history"
                 >
                   <svg
@@ -343,7 +327,6 @@ function CreditsContent() {
                   >
                     <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
                   </svg>
-                  {loadingTransactions ? 'Refreshing...' : 'Refresh'}
                 </button>
               </div>
               
@@ -435,7 +418,7 @@ function CreditsContent() {
                     border: '1px solid var(--nillion-border)',
                   }}
                 >
-                  {isOpeningPortal ? 'Opening...' : 'Open Customer Portal'}
+                  {isOpeningPortal ? 'Opening...' : 'Open Customer Portal ↗'}
                 </button>
                 {transactions.length === 0 && (
                   <p className="text-xs text-white opacity-60 mt-2">
@@ -445,28 +428,15 @@ function CreditsContent() {
               </div>
             </div>
           </div>
-        </main>
-        <Footer />
-      </div>
-    </div>
   )
 }
 
 export default function CreditsPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--nillion-bg)' }}>
-        <Sidebar />
-        <div className="ml-64 flex flex-col flex-1">
-          <Header />
-          <main className="p-8 flex-1">
-            <div className="max-w-4xl">
-              <h1 className="mb-2 text-white">Credits</h1>
-              <p className="text-white opacity-80">Loading...</p>
-            </div>
-          </main>
-          <Footer />
-        </div>
+      <div className="max-w-4xl">
+        <h1 className="mb-2 text-white">Credits</h1>
+        <p className="text-white opacity-80">Loading...</p>
       </div>
     }>
       <CreditsContent />

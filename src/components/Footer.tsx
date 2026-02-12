@@ -2,7 +2,10 @@
 
 export default function Footer() {
   return (
-    <footer className="border-t" style={{ backgroundColor: 'var(--nillion-bg)', borderColor: 'var(--nillion-border)' }}>
+    <footer
+      className="relative z-20 border-t"
+      style={{ backgroundColor: 'var(--nillion-bg)', borderColor: 'var(--nillion-border)' }}
+    >
       <div className="px-8 py-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           {/* Left Section: Logo, Copyright, Policy Links */}
