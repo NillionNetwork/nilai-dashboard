@@ -5,7 +5,8 @@ import { v4 as uuidv4 } from 'uuid'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { usePrivy } from '@privy-io/react-auth'
-import EC from 'elliptic'
+import { secp256k1 } from "@noble/curves/secp256k1.js";
+import { bytesToHex } from "@noble/hashes/utils.js";
 
 interface Credential {
   credential_id: string
@@ -19,7 +20,7 @@ interface Credential {
 
 export default function ApiKeysPage() {
   const router = useRouter()
-  const { authenticated, user, ready } = usePrivy()
+  const { authenticated, user, ready, getAccessToken } = usePrivy()
   const [credentials, setCredentials] = useState<Credential[]>([])
   const [loading, setLoading] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
@@ -46,7 +47,12 @@ export default function ApiKeysPage() {
 
     setLoading(true)
     try {
-      const response = await fetch(`/api/credential/user/${user.id}`)
+      const token = await getAccessToken()
+      const response = await fetch(`/api/credential/user/${user.id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
       if (response.ok) {
         const data = await response.json()
         setCredentials(data.credentials || [])
@@ -68,7 +74,12 @@ export default function ApiKeysPage() {
     }
 
     try {
-      const response = await fetch(`/api/stripe/invoices?user_id=${user.id}`)
+      const token = await getAccessToken()
+      const response = await fetch(`/api/stripe/invoices?user_id=${user.id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
       if (response.ok) {
         const data = await response.json()
         setHasPaymentHistory((data.transactions || []).length > 0)
@@ -115,17 +126,10 @@ export default function ApiKeysPage() {
 
   const generateKeypair = () => {
     try {
-      // Initialize secp256k1 curve
-      const ec = new EC.ec('secp256k1')
-      
-      // Generate a new key pair
-      const keyPair = ec.genKeyPair()
-      
-      // Get private key as hex (32 bytes = 64 hex chars)
-      const privateKeyHex = keyPair.getPrivate('hex').padStart(64, '0')
-      
-      // Get compressed public key as hex
-      const publicKeyHex = keyPair.getPublic(true, 'hex') // true = compressed
+      const privateKeyBytes = secp256k1.utils.randomSecretKey();
+      const publicKeyBytes = secp256k1.getPublicKey(privateKeyBytes, true)
+      const privateKeyHex = bytesToHex(privateKeyBytes);
+      const publicKeyHex = bytesToHex(publicKeyBytes)
       
       // Format as did:nil:{publicKeyHex}
       const did = `did:nil:${publicKeyHex}`
@@ -153,10 +157,12 @@ export default function ApiKeysPage() {
     const credentialKey = uuidv4()
 
     try {
+      const token = await getAccessToken()
       const response = await fetch('/api/credential', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           user_id: user.id,
@@ -202,10 +208,12 @@ export default function ApiKeysPage() {
     setSuccess(null)
 
     try {
+      const token = await getAccessToken()
       const response = await fetch('/api/credential', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           user_id: user.id,
@@ -244,8 +252,12 @@ export default function ApiKeysPage() {
     }
 
     try {
+      const token = await getAccessToken()
       const response = await fetch(`/api/credential/${credentialId}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
       })
 
       if (!response.ok) {

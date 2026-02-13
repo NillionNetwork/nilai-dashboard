@@ -8,7 +8,7 @@ import { useUserCredits } from '@/hooks/useUserCredits'
 const TOPUP_AMOUNTS = [10, 25, 50, 100, 250, 500]
 
 function CreditsContent() {
-  const { authenticated, user } = usePrivy()
+  const { authenticated, user, getAccessToken } = usePrivy()
   const { balance, loading } = useUserCredits()
   const searchParams = useSearchParams()
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null)
@@ -35,7 +35,12 @@ function CreditsContent() {
 
     setLoadingTransactions(true)
     try {
-      const response = await fetch(`/api/stripe/invoices?user_id=${user.id}`)
+      const token = await getAccessToken()
+      const response = await fetch(`/api/stripe/invoices?user_id=${user.id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
       if (response.ok) {
         const data = await response.json()
         setTransactions(data.transactions || [])
@@ -107,10 +112,12 @@ function CreditsContent() {
 
     try {
       // Create Stripe Checkout session
+      const token = await getAccessToken()
       const response = await fetch('/api/stripe/create-checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           user_id: user.id,
@@ -158,10 +165,12 @@ function CreditsContent() {
     setError(null)
 
     try {
+      const token = await getAccessToken()
       const response = await fetch('/api/stripe/create-portal-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           user_id: user.id,

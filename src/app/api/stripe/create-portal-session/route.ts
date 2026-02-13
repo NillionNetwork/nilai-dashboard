@@ -1,18 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { stripe } from '@/lib/stripe'
+import { withAuthAndUserIdFromBody } from '@/lib/api-wrapper'
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json()
-    const { user_id } = body
-
-    if (!user_id) {
-      return NextResponse.json(
-        { error: 'user_id is required' },
-        { status: 400 }
-      )
-    }
+export const POST = withAuthAndUserIdFromBody(async (request, claims, body) => {
+  const { user_id } = body
 
     if (!process.env.STRIPE_SECRET_KEY) {
       console.error('STRIPE_SECRET_KEY is not configured')
@@ -52,12 +44,5 @@ export async function POST(request: NextRequest) {
       return_url: `${request.headers.get('origin') || 'http://localhost:3000'}/credits`,
     })
 
-    return NextResponse.json({ url: portalSession.url })
-  } catch (error) {
-    console.error('Error creating portal session:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
-  }
-}
+  return NextResponse.json({ url: portalSession.url })
+})

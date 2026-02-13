@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
 
 export function useCreateUser() {
-  const { authenticated, user, ready } = usePrivy()
+  const { authenticated, user, ready, getAccessToken } = usePrivy()
   const hasCreatedUser = useRef(false)
 
   useEffect(() => {
@@ -10,9 +10,14 @@ export function useCreateUser() {
       const checkAndCreateUser = async () => {
         try {
           const privyId = user.id
+          const token = await getAccessToken()
           
           // First, check if user already exists
-          const checkResponse = await fetch(`/api/users/${privyId}`)
+          const checkResponse = await fetch(`/api/users/${privyId}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          })
           
           if (checkResponse.ok) {
             // User already exists
@@ -27,6 +32,7 @@ export function useCreateUser() {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
               },
               body: JSON.stringify({
                 user_id: privyId,
