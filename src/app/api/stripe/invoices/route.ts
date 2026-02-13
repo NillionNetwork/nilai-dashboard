@@ -1,18 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { stripe } from '@/lib/stripe'
+import { withAuthAndUserIdFromQuery } from '@/lib/api-wrapper'
 
-export async function GET(request: NextRequest) {
-  try {
-    const searchParams = request.nextUrl.searchParams
-    const user_id = searchParams.get('user_id')
-
-    if (!user_id) {
-      return NextResponse.json(
-        { error: 'user_id is required' },
-        { status: 400 }
-      )
-    }
+export const GET = withAuthAndUserIdFromQuery(async (request, claims, userId) => {
+  const user_id = userId
 
     if (!process.env.STRIPE_SECRET_KEY) {
       console.error('STRIPE_SECRET_KEY is not configured')
@@ -96,14 +88,7 @@ export async function GET(request: NextRequest) {
       ...formattedCheckouts.map((checkout) => ({ ...checkout, type: 'checkout' as const })),
     ].sort((a, b) => b.created - a.created)
 
-    return NextResponse.json({
-      transactions: allTransactions,
-    })
-  } catch (error) {
-    console.error('Error fetching invoices:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
-  }
-}
+  return NextResponse.json({
+    transactions: allTransactions,
+  })
+})

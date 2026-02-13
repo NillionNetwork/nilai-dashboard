@@ -26,17 +26,21 @@ export default function Footer() {
               © 2026 Nillion. All rights reserved.
             </p>
             <div className="flex flex-wrap gap-4 text-sm">
-              <a 
-                href="/terms" 
-                className="text-white opacity-80 hover:opacity-100 underline transition-opacity"
+              <a
+                  href="https://nillion.notion.site/nilai-terms-of-service"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white opacity-80 hover:opacity-100 transition-opacity"
               >
                 Terms of Service
               </a>
-              <a 
-                href="/privacy" 
-                className="text-white opacity-80 hover:opacity-100 underline transition-opacity"
+              <a
+                href="https://nillion.notion.site/nilai-privacy-notice"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white opacity-80 hover:opacity-100 transition-opacity"
               >
-                Privacy Policy
+                Privacy Notice
               </a>
             </div>
           </div>

@@ -43,7 +43,7 @@ interface CredentialUsage {
 }
 
 export default function UsagePage() {
-  const { authenticated, ready, user } = usePrivy()
+  const { authenticated, ready, user, getAccessToken } = usePrivy()
   const [_, setCredentials] = useState<Credential[]>([])
   const [usageData, setUsageData] = useState<CredentialUsage[]>([])
   const [loading, setLoading] = useState(false)
@@ -60,7 +60,12 @@ export default function UsagePage() {
       setLoading(true)
       setError(null)
       try {
-        const response = await fetch(`/api/credential/user/${user.id}`)
+        const token = await getAccessToken()
+        const response = await fetch(`/api/credential/user/${user.id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        })
         if (response.ok) {
           const data = await response.json()
           const creds = data.credentials || []
@@ -69,8 +74,16 @@ export default function UsagePage() {
           // Fetch usage data for each credential
           const usagePromises = creds.map(async (cred: Credential) => {
             const [rateLimitsRes, spendingRes] = await Promise.all([
-              fetch(`/api/usage/rate-limits/${cred.credential_id}`),
-              fetch(`/api/usage/spending/${cred.credential_id}`)
+              fetch(`/api/usage/rate-limits/${cred.credential_id}`, {
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                },
+              }),
+              fetch(`/api/usage/spending/${cred.credential_id}`, {
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                },
+              })
             ])
 
             const rateLimits = rateLimitsRes.ok ? await rateLimitsRes.json() : null

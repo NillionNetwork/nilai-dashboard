@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
 
 export function useUserCredits() {
-  const { authenticated, user, ready } = usePrivy()
+  const { authenticated, user, ready, getAccessToken } = usePrivy()
   const [balance, setBalance] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -15,7 +15,12 @@ export function useUserCredits() {
 
       setLoading(true)
       try {
-        const response = await fetch(`/api/users/${user.id}`)
+        const token = await getAccessToken()
+        const response = await fetch(`/api/users/${user.id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        })
         if (response.ok) {
           const data = await response.json()
           setBalance(data.balance ?? 0)

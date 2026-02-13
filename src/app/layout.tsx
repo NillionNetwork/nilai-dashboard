@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { Analytics } from '@vercel/analytics/react'
 import PrivyProvider from '@/components/PrivyProvider'
 import Sidebar from '@/components/Sidebar'
 import Header from '@/components/Header'
@@ -37,6 +38,7 @@ export default function RootLayout({
             <Footer />
           </div>
         </PrivyProvider>
+        <Analytics />
       </body>
     </html>
   )
