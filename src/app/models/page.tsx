@@ -1,11 +1,11 @@
 'use client'
 
 const models = [
-  {
-    name: 'google/gemma-3-27b-it',
-    url: 'https://huggingface.co/google/gemma-3-27b-it',
-    price: '$0.12',
-  },
+  // {
+  //   name: 'google/gemma-3-27b-it',
+  //   url: 'https://huggingface.co/google/gemma-3-27b-it',
+  //   price: '$0.12',
+  // },
   {
     name: 'openai/gpt-oss-20b',
     url: 'https://huggingface.co/openai/gpt-oss-20b',
