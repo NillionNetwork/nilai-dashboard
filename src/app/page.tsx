@@ -223,7 +223,7 @@ function HomeContent() {
                           }}
                         >
                           <option value="openai/gpt-oss-20b">openai/gpt-oss-20b</option>
-                          <option value="google/gemma-3-27b-it">google/gemma-3-27b-it</option>
+                          {/*<option value="google/gemma-3-27b-it">google/gemma-3-27b-it</option>*/}
                         </select>
                       </div>
                       
