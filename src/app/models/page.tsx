@@ -1,15 +1,35 @@
 'use client'
 
-const models = [
+interface ModelPricing {
+  prompt_tokens_price: number
+  completion_tokens_price: number
+  web_search_cost: number
+}
+
+interface Model {
+  name: string
+  url: string
+  pricing: ModelPricing
+}
+
+const models: Model[] = [
   // {
   //   name: 'google/gemma-3-27b-it',
   //   url: 'https://huggingface.co/google/gemma-3-27b-it',
-  //   price: '$0.12',
+  //   pricing: {
+  //     prompt_tokens_price: 0.15,
+  //     completion_tokens_price: 0.45,
+  //     web_search_cost: 0.05,
+  //   },
   // },
   {
     name: 'openai/gpt-oss-20b',
     url: 'https://huggingface.co/openai/gpt-oss-20b',
-    price: '$0.6',
+    pricing: {
+      prompt_tokens_price: 0.15,
+      completion_tokens_price: 0.45,
+      web_search_cost: 0.05,
+    },
   },
 ]
 
@@ -36,14 +56,27 @@ export default function ModelsPage() {
             <h2 className="mb-4 text-white font-medium" style={{ fontSize: '16px' }}>
               {model.name}
             </h2>
-            <div className="mb-4">
-              <div className="flex items-baseline gap-2">
-                <span className="text-xl font-bold text-white">
-                  {model.price}
-                </span>
-                <span className="text-xs text-white opacity-70">
-                  per 1M tokens
-                </span>
+            <div className="mb-4 space-y-2">
+              <div className="text-xs text-white opacity-70 mb-2">Pricing (per 1M tokens):</div>
+              <div className="space-y-1.5">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-white opacity-80">Prompt tokens (Input):</span>
+                  <span className="text-sm font-semibold text-white">
+                    ${model.pricing.prompt_tokens_price.toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-white opacity-80">Completion tokens (Output):</span>
+                  <span className="text-sm font-semibold text-white">
+                    ${model.pricing.completion_tokens_price.toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-white opacity-80">Web search:</span>
+                  <span className="text-sm font-semibold text-white">
+                    ${model.pricing.web_search_cost.toFixed(2)}
+                  </span>
+                </div>
               </div>
             </div>
             <a
