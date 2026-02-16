@@ -25,7 +25,7 @@ const navigation = [
     section: 'LEARN',
     items: [
       { name: 'Docs', href: 'https://docs.nillion.com/blind-computer/build/llms/overview', external: true },
-      { name: 'API reference', href: 'https://api.nilai.nillion.network/docs', external: true },
+      { name: 'API reference', href: 'https://docs.nillion.com/api/nilai/overview', external: true },
     ],
   },
 ]
