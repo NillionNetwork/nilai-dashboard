@@ -13,15 +13,15 @@ interface Model {
 }
 
 const models: Model[] = [
-  // {
-  //   name: 'google/gemma-3-27b-it',
-  //   url: 'https://huggingface.co/google/gemma-3-27b-it',
-  //   pricing: {
-  //     prompt_tokens_price: 0.15,
-  //     completion_tokens_price: 0.45,
-  //     web_search_cost: 0.05,
-  //   },
-  // },
+  {
+    name: 'google/gemma-3-27b-it',
+    url: 'https://huggingface.co/google/gemma-3-27b-it',
+    pricing: {
+      prompt_tokens_price: 0.15,
+      completion_tokens_price: 0.45,
+      web_search_cost: 0.05,
+    },
+  },
   {
     name: 'openai/gpt-oss-20b',
     url: 'https://huggingface.co/openai/gpt-oss-20b',
