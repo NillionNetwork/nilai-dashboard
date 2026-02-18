@@ -1,6 +1,6 @@
 {
   "name": "nilai-dashboard",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Developer Dashboard for nilAI | Manage your API keys, credits, usage stats",
   "license": "MIT",
   "scripts": {
@@ -10,8 +10,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@privy-io/react-auth": "^3.13.1",
-    "@privy-io/node": "^0.8.0",
+    "@privy-io/react-auth": "^3.14.0",
+    "@privy-io/node": "^0.9.0",
     "@stripe/stripe-js": "^8.7.0",
     "@vercel/analytics": "^1.6.1",
     "@noble/curves": "^2.0.1",

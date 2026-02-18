@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
               default-src 'self';
               script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com;
               style-src 'self' 'unsafe-inline';
-              img-src 'self' data: blob:;
+              img-src 'self' data: blob: https://*.walletconnect.com https://*.walletconnect.org https://*.rainbow.me https://*.1inch.io https://*.base.org https://*.privy.io https://*.privy.com;
               font-src 'self';
               object-src 'none';
               base-uri 'self';
