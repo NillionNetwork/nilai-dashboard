@@ -40,18 +40,3 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id
 PRIVY_APP_SECRET=your_privy_app_secret
 ```
-
-## Tech Stack
-
-- **Next.js** - React framework
-- **Privy** - Authentication
-- **Stripe** - Payment processing for credit top-ups
-- **nilAuth Credit Service** - Credit and credential management
-
-## Features
-
-- User authentication via Privy
-- API key management (UUID-based keys)
-- DID management for NUCs and delegation flow
-- Credit balance management
-- Stripe payment integration for adding credits
