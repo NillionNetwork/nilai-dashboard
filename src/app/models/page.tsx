@@ -10,12 +10,23 @@ interface Model {
   name: string
   url: string
   pricing: ModelPricing
+  deprecationNote?: string
 }
 
 const models: Model[] = [
   {
     name: 'google/gemma-3-27b-it',
     url: 'https://huggingface.co/google/gemma-3-27b-it',
+    pricing: {
+      prompt_tokens_price: 0.15,
+      completion_tokens_price: 0.45,
+      web_search_cost: 0.05,
+    },
+    deprecationNote: 'To be deprecated on Apr 15',
+  },
+  {
+    name: 'google/gemma-4-26B-A4B-it',
+    url: 'https://huggingface.co/google/gemma-4-26B-A4B-it',
     pricing: {
       prompt_tokens_price: 0.15,
       completion_tokens_price: 0.45,
@@ -56,6 +67,18 @@ export default function ModelsPage() {
             <h2 className="mb-4 text-white font-medium" style={{ fontSize: '16px' }}>
               {model.name}
             </h2>
+            {model.deprecationNote && (
+              <div
+                className="mb-4 rounded-md px-3 py-2 text-xs font-medium"
+                style={{
+                  backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                  border: '1px solid rgba(245, 158, 11, 0.4)',
+                  color: '#fbbf24',
+                }}
+              >
+                {model.deprecationNote}
+              </div>
+            )}
             <div className="mb-4 space-y-2">
               <div className="text-xs text-white opacity-70 mb-2">Pricing (per 1M tokens):</div>
               <div className="space-y-1.5">
